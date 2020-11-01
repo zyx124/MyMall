@@ -1,4 +1,4 @@
-package com.example.orders;
+package com.zyx.mall.orders;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
