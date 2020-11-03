@@ -6,9 +6,10 @@
  * 版权所有，侵权必究！
  */
 
-package io.renren.common.exception;
+package com.zyx.common.exception;
 
-import io.renren.common.utils.R;
+
+import com.zyx.common.utils.R;
 import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
