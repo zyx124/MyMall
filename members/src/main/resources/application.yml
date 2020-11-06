@@ -4,6 +4,14 @@ spring:
     password: password
     url: jdbc:mysql://127.0.0.1:3306/mall_ums
     driver-class-name: com.mysql.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  application:
+    name: members
+
+
 mybatis-plus:
   mapper-locations: classpath*:classpath*:/mapper/**/*.xml
   global-config:
