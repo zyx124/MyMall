@@ -1,19 +1,19 @@
-spring:
-  datasource:
-    username: admin
-    password: password
-    url: jdbc:mysql://127.0.0.1:3306/mall_sms
-    driver-class-name: com.mysql.jdbc.Driver
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-  application:
-    name: coupons
-mybatis-plus:
-  mapper-locations: classpath*:classpath*:/mapper/**/*.xml
-  global-config:
-    db-config:
-      id-type: auto
-server:
-  port: 7000
+#spring:
+#  datasource:
+#    username: admin
+#    password: password
+#    url: jdbc:mysql://127.0.0.1:3306/mall_sms
+#    driver-class-name: com.mysql.jdbc.Driver
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+#  application:
+#    name: coupons
+#mybatis-plus:
+#  mapper-locations: classpath*:classpath*:/mapper/**/*.xml
+#  global-config:
+#    db-config:
+#      id-type: auto
+#server:
+#  port: 7000
