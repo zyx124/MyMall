@@ -9,8 +9,8 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
     alicloud:
-      access-key: LTAI4G7Xysb2DQDzJunL3jQj
-      secret-key: odimylDuJWMiokJlJCSVlCY0Lni2GE
+      access-key:
+      secret-key:
       oss:
         endpoint: oss-cn-beijing.aliyuncs.com
 mybatis-plus:
@@ -25,3 +25,5 @@ server:
 logging:
   level:
     com.zyx.mall: debug
+
+  LTAI4G7Xysb2DQDzJunL3jQjodimylDuJWMiokJlJCSVlCY0Lni2GE
