@@ -1,5 +1,8 @@
 package com.zyx.mall.products;
 
+import com.aliyun.oss.OSS;
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.OSSClientBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zyx.mall.products.entity.BrandEntity;
 import com.zyx.mall.products.service.BrandService;
@@ -9,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
 
@@ -18,6 +24,29 @@ class ProductsApplicationTests {
 
 	@Autowired
 	BrandService brandService;
+
+	@Autowired
+	OSSClient ossClient;
+
+	@Test
+	public void upload() throws FileNotFoundException {
+//		String endpoint = "http://oss-cn-beijing.aliyuncs.com";
+//// 云账号AccessKey有所有API访问权限，建议遵循阿里云安全最佳实践，创建并使用RAM子账号进行API访问或日常运维，请登录 https://ram.console.aliyun.com 创建。
+//		String accessKeyId = "LTAI4G7Xysb2DQDzJunL3jQj";
+//		String accessKeySecret = "odimylDuJWMiokJlJCSVlCY0Lni2GE";
+//
+//// 创建OSSClient实例。
+//		OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+
+// 上传文件流。
+		InputStream inputStream = new FileInputStream("/home/zyx/Nutstore/Nutstore/pig.jpg");
+		ossClient.putObject("mymall-zyx", "pig.jpg", inputStream);
+
+// 关闭OSSClient。
+		ossClient.shutdown();
+
+		System.out.println("Success upload!");
+	}
 
 	@Test
 	void contextLoads() {
