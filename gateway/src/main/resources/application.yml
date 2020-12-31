@@ -1,3 +1,11 @@
+#logging:
+#  level:
+#    reactor:
+#      netty: INFO
+#    org:
+#      springframework:
+#        cloud:
+#          gateway: TRACE
 spring:
   cloud:
     gateway:
@@ -18,9 +26,17 @@ spring:
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
 
+        - id: third_party_route
+          uri: lb://third-party
+          predicates:
+            - Path=/api/thirdparty/**
+          filters:
+            - RewritePath=/api/thirdparty/(?<segment>.*),/$\{segment}
+
         - id: admin_route
           uri: lb://renren-fast
           predicates:
             - Path=/api/**
           filters:
             - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment}
+
