@@ -19,5 +19,6 @@
 		<module>renren-generator</module>
 		<module>mall-common</module>
 		<module>gateway</module>
+		<module>third-party</module>
 	</modules>
 </project>
