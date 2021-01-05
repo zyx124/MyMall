@@ -61,21 +61,20 @@ public class BrandController {
      */
     @RequestMapping("/save")
     // @RequiresPermissions("products:brand:save")
-    public R save(@Valid @RequestBody BrandEntity brand, BindingResult result) {
-        if (result.hasErrors()) {
-            Map<String, String> map = new HashMap<>();
-            result.getFieldErrors().forEach((item)->{
-                String message = item.getDefaultMessage();
-                String field = item.getField();
-                map.put(field, message);
-            });
-
-            return R.error(400, "not valid data").put("data", map);
-        } else {
-            brandService.updateById(brand);
-        }
-
-
+    public R save(@Valid @RequestBody BrandEntity brand /*, BindingResult result*/) {
+//        if (result.hasErrors()) {
+//            Map<String, String> map = new HashMap<>();
+//            result.getFieldErrors().forEach((item)->{
+//                String message = item.getDefaultMessage();
+//                String field = item.getField();
+//                map.put(field, message);
+//            });
+//
+//            return R.error(400, "not valid data").put("data", map);
+//        } else {
+//
+//        }
+        brandService.updateById(brand);
         return R.ok();
     }
 
