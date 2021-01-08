@@ -6,7 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.zyx.common.valid.AddGroup;
+import com.zyx.common.valid.ListValue;
+import com.zyx.common.valid.UpdateGroup;
+import com.zyx.common.valid.UpdateStatusGroup;
 import lombok.Data;
+import org.apache.ibatis.annotations.Update;
+import org.codehaus.jettison.badgerfish.BadgerFishDOMDocumentParser;
 import org.hibernate.validator.constraints.URL;
 
 import javax.validation.Valid;
@@ -27,41 +33,43 @@ public class BrandEntity implements Serializable {
 	/**
 	 * 
 	 */
+	@NotNull(message = "Brand ID in a must for modification!", groups = {UpdateGroup.class})
+	@Null(message = "Brand ID cannot be assigned when adding entity!", groups = {AddGroup.class})
 	@TableId
 	private Long brandId;
 	/**
 	 * 
 	 */
-	@NotBlank(message="Brand name is necessary!")
-	@Size(min = 1, max = 100)
+	@NotBlank(message="Brand name is necessary!", groups = {AddGroup.class, UpdateGroup.class})
 	private String name;
 	/**
 	 * 
 	 */
-	@NotBlank(message = "Logo URL cannot be empty!")
-	@URL(message = "logo must be a valid URL")
+	@NotEmpty(message = "Logo URL cannot be empty!", groups = {AddGroup.class})
+	@URL(message = "logo must be a valid URL", groups = {AddGroup.class, UpdateGroup.class})
 	private String logo;
 	/**
 	 * 
 	 */
-	@NotEmpty
+	@NotEmpty(groups = {AddGroup.class})
 	private String descript;
 	/**
 	 * 
 	 */
-	@NotEmpty
+
+	@ListValue(vals={0, 1}, groups = {AddGroup.class, UpdateStatusGroup.class})
 	private Integer showStatus;
 	/**
 	 * 
 	 */
-	@NotEmpty
-	@Pattern(regexp = "/^[a-zA-Z]$/")
+	@NotNull(groups = {AddGroup.class, UpdateGroup.class})
+	@Pattern(regexp = "^[a-zA-Z]$", groups = {AddGroup.class, UpdateGroup.class})
 	private String firstLetter;
 	/**
 	 * 
 	 */
-	@NotNull
-	@Min(value = 0, message = "sort must be larger than 0")
+	@NotNull(groups = {AddGroup.class})
+	@Min(value = 0, message = "sort must be larger than 0", groups = {AddGroup.class, UpdateGroup.class})
 	private Integer sort;
 
 }
