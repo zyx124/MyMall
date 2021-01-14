@@ -1,10 +1,13 @@
 package com.zyx.mall.products.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import com.sun.xml.internal.ws.policy.EffectiveAlternativeSelector;
 import lombok.Data;
 
 /**
@@ -43,6 +46,9 @@ public class AttrGroupEntity implements Serializable {
 	/**
 	 * 
 	 */
+
 	private Long catelogId;
 
+	@TableField(exist = false)
+	private Long[] catelogPath;
 }

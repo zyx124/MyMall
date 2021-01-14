@@ -3,8 +3,7 @@ package com.zyx.mall.products.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -40,11 +39,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         List<CategoryEntity> entities = baseMapper.selectList(null);
 
         // construct a tree
-        List<CategoryEntity> level1Menu = entities.stream().filter(categoryEntity -> categoryEntity.getParentCid() == 0).map((menu)->{
+        List<CategoryEntity> level1Menu = entities.stream().filter(categoryEntity -> categoryEntity.getParentCid() == 0).map((menu) -> {
             menu.setChildren(getChildren(menu, entities));
             return menu;
-        }).sorted((menu1, menu2)->{
-            return (menu1.getSort() == null ? 0 : menu1.getSort() )- (menu2.getSort() == null ? 0: menu2.getSort());
+        }).sorted((menu1, menu2) -> {
+            return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
         }).collect(Collectors.toList());
 
         return level1Menu;
@@ -56,15 +55,29 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         baseMapper.deleteBatchIds(asList);
     }
 
+    @Override
+    public Long[] findCatelogPath(Long catelogId) {
+        List<Long> path = new ArrayList<>();
+        List<Long> parentPath = findParentPath(catelogId, path);
+        Collections.reverse(parentPath);
+
+        return parentPath.toArray(new Long[parentPath.size()]);
+    }
+
+    private List<Long> findParentPath(Long catelogId, List<Long> path) {
+        path.add(catelogId);
+        CategoryEntity byId = this.getById(catelogId);
+        if (byId.getParentCid() != 0) {
+            findParentPath(byId.getParentCid(), path);
+        }
+        return path;
+    }
+
     private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> all) {
-        List<CategoryEntity> children = all.stream().filter(categoryEntity -> {
-            return categoryEntity.getParentCid() == root.getCatId();
-        }).map(categoryEntity -> {
+        List<CategoryEntity> children = all.stream().filter(categoryEntity -> categoryEntity.getParentCid() == root.getCatId()).map(categoryEntity -> {
             categoryEntity.setChildren(getChildren(categoryEntity, all));
             return categoryEntity;
-        }).sorted((menu1, menu2) -> {
-            return (menu1.getSort() == null ? 0 : menu1.getSort() )- (menu2.getSort() == null ? 0: menu2.getSort());
-        }).collect(Collectors.toList());
+        }).sorted(Comparator.comparingInt(menu -> (menu.getSort() == null ? 0 : menu.getSort()))).collect(Collectors.toList());
 
         return children;
     }
