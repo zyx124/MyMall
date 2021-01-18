@@ -91,7 +91,7 @@ public class BrandController {
         if (result.hasErrors()) {
             System.out.println("Not Valid");
         } else {
-            brandService.updateById(brand);
+            brandService.updateDetail(brand);
         }
         return R.ok();
     }
