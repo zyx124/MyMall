@@ -6,6 +6,8 @@ import com.aliyun.oss.OSSClientBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zyx.mall.products.entity.BrandEntity;
 import com.zyx.mall.products.service.BrandService;
+import com.zyx.mall.products.service.CategoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +17,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
-
+@Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class ProductsApplicationTests {
@@ -27,6 +30,16 @@ class ProductsApplicationTests {
 
 	@Autowired
 	OSSClient ossClient;
+
+	@Autowired
+	CategoryService categoryService;
+
+	@Test
+	public void testFindPath() {
+		Long[] catelogPath = categoryService.findCatelogPath(225L);
+		log.info("Full path: {}", Arrays.asList(catelogPath));
+	}
+
 
 	@Test
 	public void upload() throws FileNotFoundException {
