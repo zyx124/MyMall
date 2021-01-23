@@ -3,13 +3,10 @@ package com.zyx.mall.products.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.zyx.mall.products.vo.AttrRespVO;
 import com.zyx.mall.products.vo.AttrVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.zyx.mall.products.entity.AttrEntity;
 import com.zyx.mall.products.service.AttrService;
@@ -31,6 +28,12 @@ public class AttrController {
     @Autowired
     private AttrService attrService;
 
+    @GetMapping("/base/list/{catelogId}")
+    public  R baseAttrList(@RequestParam Map<String, Object> params, @PathVariable("catelogId") Long catelogId) {
+        PageUtils page = attrService.queryBaseAttrPage(params, catelogId);
+        return R.ok().put("page", page);
+    }
+
     /**
      * 列表
      */
@@ -49,9 +52,9 @@ public class AttrController {
     @RequestMapping("/info/{attrId}")
     // @RequiresPermissions("products:attr:info")
     public R info(@PathVariable("attrId") Long attrId){
-		AttrEntity attr = attrService.getById(attrId);
+		AttrRespVO attrRespVO = attrService.getAttrInfo(attrId);
 
-        return R.ok().put("attr", attr);
+        return R.ok().put("attr", attrRespVO);
     }
 
     /**
@@ -70,8 +73,8 @@ public class AttrController {
      */
     @RequestMapping("/update")
     // @RequiresPermissions("products:attr:update")
-    public R update(@RequestBody AttrEntity attr){
-		attrService.updateById(attr);
+    public R update(@RequestBody AttrVO attr){
+		attrService.updateAttr(attr);
 
         return R.ok();
     }
