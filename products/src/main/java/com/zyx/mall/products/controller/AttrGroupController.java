@@ -1,15 +1,15 @@
 package com.zyx.mall.products.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.zyx.mall.products.entity.AttrEntity;
+import com.zyx.mall.products.service.AttrService;
 import com.zyx.mall.products.service.CategoryService;
+import com.zyx.mall.products.vo.AttrGroupRelationVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.zyx.mall.products.entity.AttrGroupEntity;
 import com.zyx.mall.products.service.AttrGroupService;
@@ -31,10 +31,24 @@ public class AttrGroupController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    AttrService attrService;
+
+    @GetMapping("/{attrgroupId}/attr/relation")
+    public R attrRelation(@PathVariable("attrgroupId") Long attrgroupId) {
+        List<AttrEntity> entityList = attrService.getRelationAttr(attrgroupId);
+        return R.ok().put("data", entityList);
+    }
+
+    @PostMapping("/attr/relation/delete")
+    public R deleRelation(@RequestBody AttrGroupRelationVO[] vos) {
+        attrService.deleteRelation(vos);
+        return R.ok();
+    }
     /**
      * 列表
      */
-    @RequestMapping("/list/{catalogId}")
+    @RequestMapping(value = "/list/{catalogId}")
     // @RequiresPermissions("products:attrgroup:list")
     public R list(@RequestParam Map<String, Object> params, @PathVariable("catalogId") Long catalogId) {
 //        PageUtils page = attrGroupService.queryPage(params);

@@ -3,9 +3,11 @@ package com.zyx.mall.products.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyx.common.utils.PageUtils;
 import com.zyx.mall.products.entity.AttrEntity;
+import com.zyx.mall.products.vo.AttrGroupRelationVO;
 import com.zyx.mall.products.vo.AttrRespVO;
 import com.zyx.mall.products.vo.AttrVO;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,11 +23,16 @@ public interface AttrService extends IService<AttrEntity> {
 
     void saveAttr(AttrVO attr);
 
-    PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId);
+    PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId, String type);
 
     AttrRespVO getAttrInfo(Long attrId);
 
     void updateAttr(AttrVO attr);
+
+    List<AttrEntity> getRelationAttr(Long attrgroupId);
+
+
+    void deleteRelation(AttrGroupRelationVO[] vos);
 
 }
 

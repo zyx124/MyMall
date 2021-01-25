@@ -3,6 +3,7 @@ package com.zyx.mall.products.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.zyx.mall.products.vo.AttrGroupRelationVO;
 import com.zyx.mall.products.vo.AttrRespVO;
 import com.zyx.mall.products.vo.AttrVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,15 @@ public class AttrController {
     @Autowired
     private AttrService attrService;
 
-    @GetMapping("/base/list/{catelogId}")
-    public  R baseAttrList(@RequestParam Map<String, Object> params, @PathVariable("catelogId") Long catelogId) {
-        PageUtils page = attrService.queryBaseAttrPage(params, catelogId);
+    @GetMapping("/{attrType}/list/{catelogId}")
+    public  R baseAttrList(@RequestParam Map<String, Object> params,
+                           @PathVariable("catelogId") Long catelogId,
+                           @PathVariable("attrType") String type) {
+        PageUtils page = attrService.queryBaseAttrPage(params, catelogId, type);
         return R.ok().put("page", page);
     }
+
+
 
     /**
      * 列表
