@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.zyx.mall.products.entity.AttrEntity;
+import com.zyx.mall.products.service.AttrAttrgroupRelationService;
 import com.zyx.mall.products.service.AttrService;
 import com.zyx.mall.products.service.CategoryService;
 import com.zyx.mall.products.vo.AttrGroupRelationVO;
@@ -34,6 +35,9 @@ public class AttrGroupController {
     @Autowired
     AttrService attrService;
 
+    @Autowired
+    AttrAttrgroupRelationService relationService;
+
     @GetMapping("/{attrgroupId}/attr/relation")
     public R attrRelation(@PathVariable("attrgroupId") Long attrgroupId) {
         List<AttrEntity> entityList = attrService.getRelationAttr(attrgroupId);
@@ -52,6 +56,13 @@ public class AttrGroupController {
         attrService.deleteRelation(vos);
         return R.ok();
     }
+
+    @PostMapping("/attr/relation")
+    public R addRelation(@RequestBody List<AttrGroupRelationVO> vos) {
+        relationService.saveBatch(vos);
+        return R.ok();
+    }
+
     /**
      * 列表
      */
