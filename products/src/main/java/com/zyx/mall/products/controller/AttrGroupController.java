@@ -9,6 +9,7 @@ import com.zyx.mall.products.service.AttrAttrgroupRelationService;
 import com.zyx.mall.products.service.AttrService;
 import com.zyx.mall.products.service.CategoryService;
 import com.zyx.mall.products.vo.AttrGroupRelationVO;
+import com.zyx.mall.products.vo.AttrGroupWithAttrsVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,6 +62,13 @@ public class AttrGroupController {
     public R addRelation(@RequestBody List<AttrGroupRelationVO> vos) {
         relationService.saveBatch(vos);
         return R.ok();
+    }
+
+    @GetMapping("/{catalogId}/withattr")
+    public R getAttrGroupWithAttrs(@PathVariable("catalogId") Long catalogId ) {
+        List<AttrGroupWithAttrsVO> vos = attrGroupService.getAttrGroupWithAttrsByCatalogId(catalogId);
+
+        return R.ok().put("data", vos);
     }
 
     /**

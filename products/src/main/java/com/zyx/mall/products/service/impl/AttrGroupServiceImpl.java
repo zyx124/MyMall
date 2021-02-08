@@ -1,9 +1,16 @@
 package com.zyx.mall.products.service.impl;
 
+import com.zyx.mall.products.entity.AttrEntity;
+import com.zyx.mall.products.service.AttrService;
+import com.zyx.mall.products.vo.AttrGroupWithAttrsVO;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -18,6 +25,9 @@ import com.zyx.mall.products.service.AttrGroupService;
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
+
+    @Autowired
+    AttrService attrService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -51,6 +61,21 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
             return new PageUtils(page);
         }
 
+    }
+
+    @Override
+    public List<AttrGroupWithAttrsVO> getAttrGroupWithAttrsByCatalogId(Long catalogId) {
+        // get group info
+        List<AttrGroupEntity> attrGroupEntities = this.list(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catalogId));
+        List<AttrGroupWithAttrsVO> collect = attrGroupEntities.stream().map(group -> {
+            AttrGroupWithAttrsVO attrsVO = new AttrGroupWithAttrsVO();
+            BeanUtils.copyProperties(group, attrsVO);
+            List<AttrEntity> attrs = attrService.getRelationAttr(attrsVO.getAttrGroupId());
+            attrsVO.setAttrs(attrs);
+            return attrsVO;
+        }).collect(Collectors.toList());
+
+        return null;
     }
 
 }
