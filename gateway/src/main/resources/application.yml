@@ -10,14 +10,14 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: test
-          uri: https://google.com
-          predicates:
-            - Query=url,google
-        - id: qq
-          uri: https://www.qq.com
-          predicates:
-            - Query=url,qq
+#        - id: test
+#          uri: https://google.com
+#          predicates:
+#            - Query=url,google
+#        - id: qq
+#          uri: https://www.qq.com
+#          predicates:
+#            - Query=url,qq
 
         - id: product_route
           uri: lb://products
@@ -32,6 +32,13 @@ spring:
             - Path=/api/thirdparty/**
           filters:
             - RewritePath=/api/thirdparty/(?<segment>.*),/$\{segment}
+
+        - id: member_route
+          uri: lb://members
+          predicates:
+            - Path=/api/members/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
 
         - id: admin_route
           uri: lb://renren-fast
