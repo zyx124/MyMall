@@ -75,7 +75,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
             return attrsVO;
         }).collect(Collectors.toList());
 
-        return null;
+        return collect;
     }
 
 }
