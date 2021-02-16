@@ -1,6 +1,7 @@
 package com.zyx.mall.coupons.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zyx.common.to.SkuReductionTO;
 import com.zyx.common.utils.PageUtils;
 import com.zyx.mall.coupons.entity.SkuFullReductionEntity;
 
@@ -16,5 +17,8 @@ import java.util.Map;
 public interface SkuFullReductionService extends IService<SkuFullReductionEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void saveSkuReduction(SkuReductionTO skuReductionTO);
+
 }
 

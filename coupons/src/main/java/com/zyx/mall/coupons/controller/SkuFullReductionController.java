@@ -3,12 +3,9 @@ package com.zyx.mall.coupons.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.zyx.common.to.SkuReductionTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.zyx.mall.coupons.entity.SkuFullReductionEntity;
 import com.zyx.mall.coupons.service.SkuFullReductionService;
@@ -29,6 +26,14 @@ import com.zyx.common.utils.R;
 public class SkuFullReductionController {
     @Autowired
     private SkuFullReductionService skuFullReductionService;
+
+    @PostMapping("/saveinfo")
+    // @RequiresPermissions("coupons:skufullreduction:list")
+    public R saveInfo(@RequestBody SkuReductionTO skuReductionTO){
+        skuFullReductionService.saveSkuReduction(skuReductionTO);
+
+        return R.ok();
+    }
 
     /**
      * 列表
