@@ -1,12 +1,18 @@
 package com.zyx.mall.products.service.impl;
 
+import com.zyx.common.to.SkuReductionTO;
+import com.zyx.common.to.SpuBoundTO;
+import com.zyx.common.utils.R;
 import com.zyx.mall.products.entity.*;
+import com.zyx.mall.products.feign.CouponFeignService;
 import com.zyx.mall.products.service.*;
 import com.zyx.mall.products.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +50,9 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Autowired
     SkuSaleAttrValueService skuSaleAttrValueService;
+
+    @Autowired
+    CouponFeignService couponFeignService;
 
 
     @Override
@@ -93,6 +102,14 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         productAttrValueService.saveProductAttr(collect);
 
         // 5. save spu credit info
+        Bounds bounds = vo.getBounds();
+        SpuBoundTO spuBoundTO = new SpuBoundTO();
+        BeanUtils.copyProperties(bounds, spuBoundTO);
+
+        R r = couponFeignService.saveSpuBounds(spuBoundTO);
+        if (r.getCode() == 0) {
+            log.error("Failed to save the Spu credits!");
+        }
 
         List<Skus> skus = vo.getSkus();
         if (skus != null && skus.size() > 0) {
@@ -139,7 +156,17 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
                 skuSaleAttrValueService.saveBatch(skuSaleAttrValueEntities);
 
-                // 5.4
+                // 5.4 save sku info for credits
+                SkuReductionTO skuReductionTO = new SkuReductionTO();
+                BeanUtils.copyProperties(item, skuReductionTO);
+                skuReductionTO.setSkuId(skuId);
+
+                if (skuReductionTO.getFullCount() > 0 || skuReductionTO.getFullPrice().compareTo(new BigDecimal("0")) == 1) {
+                    R r1 = couponFeignService.saveSkuReduction(skuReductionTO);
+                    if (r1.getCode() != 0) {
+                        log.error("Failed to save sku info!");
+                    }
+                }
 
             });
         }
