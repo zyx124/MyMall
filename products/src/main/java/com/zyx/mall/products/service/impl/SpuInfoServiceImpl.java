@@ -7,6 +7,7 @@ import com.zyx.mall.products.entity.*;
 import com.zyx.mall.products.feign.CouponFeignService;
 import com.zyx.mall.products.service.*;
 import com.zyx.mall.products.vo.*;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ import com.zyx.common.utils.PageUtils;
 import com.zyx.common.utils.Query;
 
 import com.zyx.mall.products.dao.SpuInfoDao;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("spuInfoService")
@@ -65,6 +67,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         return new PageUtils(page);
     }
 
+    @Transactional
     @Override
     public void saveSpuInfo(SpuSaveVO vo) {
         // 1. save spu basic info
@@ -140,7 +143,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                     skuImagesEntity.setDefaultImg(img.getDefaultImg());
                     return skuImagesEntity;
 
-                }).collect(Collectors.toList());
+                }).filter(entity -> !StringUtils.isEmpty(entity.getImgUrl())).collect(Collectors.toList());
 
                 // 5.2 save sku image info
                 skuImagesService.saveBatch(imagesEntities);
@@ -161,7 +164,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 BeanUtils.copyProperties(item, skuReductionTO);
                 skuReductionTO.setSkuId(skuId);
 
-                if (skuReductionTO.getFullCount() > 0 || skuReductionTO.getFullPrice().compareTo(new BigDecimal("0")) == 1) {
+                if (skuReductionTO.getFullCount() > 0 || skuReductionTO.getFullPrice().compareTo(new BigDecimal("0")) > 0) {
                     R r1 = couponFeignService.saveSkuReduction(skuReductionTO);
                     if (r1.getCode() != 0) {
                         log.error("Failed to save sku info!");
@@ -180,6 +183,8 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     public void saveBaseSpuInfo(SpuInfoEntity spuInfoEntity) {
         this.baseMapper.insert(spuInfoEntity);
     }
+
+    
 
 
 }
