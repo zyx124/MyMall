@@ -188,31 +188,31 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     public PageUtils queryPageByCondition(Map<String, Object> params) {
         QueryWrapper<SpuInfoEntity> wrapper = new QueryWrapper<>();
 
-        String key = params.get("key").toString();
+        String key = (String) params.get("key");
         if (!StringUtils.isEmpty(key)) {
             wrapper.and(w -> {
                 w.eq("id", key).or().like("spu_name", key);
             });
         }
 
-        String status = params.get("status").toString();
+        String status = (String) params.get("status");
         if (!StringUtils.isEmpty(status)) {
             wrapper.and(w -> {
                 w.eq("publish_status", status);
             });
         }
 
-        String brandId = params.get("brandId").toString();
-        if (!StringUtils.isEmpty(brandId)) {
+        String brandId = (String) params.get("brandId");
+        if (!StringUtils.isEmpty(brandId) && !"0".equalsIgnoreCase(brandId)) {
             wrapper.and(w -> {
                 w.eq("brand_id", brandId);
             });
         }
 
-        String catelogId = params.get("catelogId").toString();
-        if (!StringUtils.isEmpty(catelogId)) {
+        String catelogId = (String) params.get("catelogId");
+        if (!StringUtils.isEmpty(catelogId) && !"0".equalsIgnoreCase(catelogId)) {
             wrapper.and(w -> {
-                w.eq("catelog_id", catelogId);
+                w.eq("catalog_id", catelogId);
             });
         }
 
