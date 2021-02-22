@@ -5,6 +5,7 @@ import com.zyx.common.utils.PageUtils;
 import com.zyx.mall.warehouse.entity.PurchaseEntity;
 import com.zyx.mall.warehouse.vo.MergeVO;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +22,8 @@ public interface PurchaseService extends IService<PurchaseEntity> {
     PageUtils queryPageUnreceive(Map<String, Object> params);
 
     void mergePurchase(MergeVO mergeVO);
+
+    void received(List<Long> ids);
 
 }
 
