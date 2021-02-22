@@ -3,6 +3,7 @@ package com.zyx.mall.warehouse.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyx.common.utils.PageUtils;
 import com.zyx.mall.warehouse.entity.PurchaseEntity;
+import com.zyx.mall.warehouse.vo.MergeVO;
 
 import java.util.Map;
 
@@ -16,5 +17,10 @@ import java.util.Map;
 public interface PurchaseService extends IService<PurchaseEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    PageUtils queryPageUnreceive(Map<String, Object> params);
+
+    void mergePurchase(MergeVO mergeVO);
+
 }
 
