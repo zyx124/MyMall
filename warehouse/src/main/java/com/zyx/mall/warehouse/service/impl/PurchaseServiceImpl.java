@@ -3,10 +3,14 @@ package com.zyx.mall.warehouse.service.impl;
 import com.zyx.common.constant.WareConstant;
 import com.zyx.mall.warehouse.entity.PurchaseDetailEntity;
 import com.zyx.mall.warehouse.service.PurchaseDetailService;
+import com.zyx.mall.warehouse.service.WareSkuService;
 import com.zyx.mall.warehouse.vo.MergeVO;
+import com.zyx.mall.warehouse.vo.PurchaseDoneVO;
+import com.zyx.mall.warehouse.vo.PurchaseItemDoneVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +27,17 @@ import com.zyx.mall.warehouse.entity.PurchaseEntity;
 import com.zyx.mall.warehouse.service.PurchaseService;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
+
 
 @Service("purchaseService")
 public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity> implements PurchaseService {
 
     @Autowired
     PurchaseDetailService detailService;
+
+    @Autowired
+    WareSkuService wareSkuService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -62,6 +71,8 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity
             this.save(purchaseEntity);
             purchaseId = purchaseEntity.getId();
         }
+
+        // TODO: make sure the order status is 0 or 1
 
         List<Long> items = mergeVO.getItems();
         Long finalPurchaseId = purchaseId;
@@ -109,6 +120,42 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity
             }).collect(Collectors.toList());
             detailService.updateBatchById(collect1);
         });
+    }
+
+    @Transactional
+    @Override
+    public void finish(PurchaseDoneVO doneVO) {
+        Long id = doneVO.getId();
+
+        // change order items status
+        Boolean flag = true;
+        List<PurchaseItemDoneVO> items = doneVO.getItems();
+        List<PurchaseDetailEntity> updates = new ArrayList<>();
+        for (PurchaseItemDoneVO item: items) {
+            PurchaseDetailEntity entity = new PurchaseDetailEntity();
+            if (item.getStatus() == WareConstant.PurchaseDetailStatusEnum.HASERROR.getCode()) {
+                flag = false;
+                entity.setStatus(item.getStatus());
+            } else {
+                entity.setStatus(WareConstant.PurchaseDetailStatusEnum.FINISHED.getCode());
+                // store the finished order
+                detailService.getById(item.getItemId());
+                wareSkuService.addStock(entity.getSkuId(), entity.getWareId(), entity.getSkuNum());
+            }
+            entity.setId(item.getItemId());
+            updates.add(entity);
+        }
+        detailService.updateBatchById(updates);
+
+        // change order status
+        PurchaseEntity purchaseEntity = new PurchaseEntity();
+        purchaseEntity.setId(id);
+        purchaseEntity.setStatus(flag ? WareConstant.PurchaseStatusEnum.FINISHED.getCode() : WareConstant.PurchaseStatusEnum.HASERROR.getCode());
+        purchaseEntity.setUpdateTime(new Date());
+        this.updateById(purchaseEntity);
+
+
+
     }
 
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyx.common.utils.PageUtils;
 import com.zyx.mall.warehouse.entity.PurchaseEntity;
 import com.zyx.mall.warehouse.vo.MergeVO;
+import com.zyx.mall.warehouse.vo.PurchaseDoneVO;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,8 @@ public interface PurchaseService extends IService<PurchaseEntity> {
     void mergePurchase(MergeVO mergeVO);
 
     void received(List<Long> ids);
+
+    void finish(PurchaseDoneVO doneVO);
 
 }
 

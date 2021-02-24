@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.zyx.mall.warehouse.vo.MergeVO;
+import com.zyx.mall.warehouse.vo.PurchaseDoneVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,17 @@ import com.zyx.common.utils.R;
 public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;
+
+
+    @PostMapping("/done")
+    // @RequiresPermissions("warehouse:purchase:list")
+    public R finish(@RequestBody PurchaseDoneVO doneVO){
+
+        purchaseService.finish(doneVO);
+
+        return R.ok();
+    }
+
 
     @PostMapping("/merge")
     // @RequiresPermissions("warehouse:purchase:list")
