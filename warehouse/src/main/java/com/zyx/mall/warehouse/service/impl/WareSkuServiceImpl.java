@@ -55,7 +55,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     @Override
     public void addStock(Long skuId, Long wareId, Integer skuNum) {
         List<WareSkuEntity> entities = wareSkuDao.selectList(new QueryWrapper<WareSkuEntity>().eq("sku_id", skuId).eq("ware_id", wareId));
-        if (entities.size() == 0) {
+        if (entities == null || entities.size() == 0) {
             WareSkuEntity skuEntity = new WareSkuEntity();
             skuEntity.setSkuId(skuId);
             skuEntity.setStock(skuNum);
