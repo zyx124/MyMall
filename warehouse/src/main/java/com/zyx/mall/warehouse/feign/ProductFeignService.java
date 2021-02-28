@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @FeignClient("products")
 public interface ProductFeignService {
 
-    @RequestMapping("products/spuinfo/info/{id}")
+    @RequestMapping("/products/skuinfo/info/{id}")
     public R info(@PathVariable("id") Long id);
 }
