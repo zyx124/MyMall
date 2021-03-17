@@ -2,6 +2,7 @@ package com.zyx.mall.products.service.impl;
 
 import com.zyx.common.to.SkuReductionTO;
 import com.zyx.common.to.SpuBoundTO;
+import com.zyx.common.to.es.SkuEsModel;
 import com.zyx.common.utils.R;
 import com.zyx.mall.products.entity.*;
 import com.zyx.mall.products.feign.CouponFeignService;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +57,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Autowired
     CouponFeignService couponFeignService;
+
+    @Autowired
+    BrandService brandService;
+
+    @Autowired
+    CategoryService categoryService;
 
 
     @Override
@@ -222,6 +230,40 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public void up(Long spuId) {
+        List<SkuEsModel> uoProducts = new ArrayList<>();
+
+        List<SkuInfoEntity> skus = skuInfoService.getSkuListBySpuId(spuId);
+        skus.stream().map(sku -> {
+            SkuEsModel esModel = new SkuEsModel();
+            BeanUtils.copyProperties(sku, esModel);
+
+            // deal with the difference
+            esModel.setSkuPrice(sku.getPrice());
+            esModel.setSkuImg(sku.getSkuDefaultImg());
+
+            // TODO: send the remote request to the warehouse to check stock info
+
+            //TODO: hotScore setting
+
+
+            // TODO: check brand and category name info
+            BrandEntity brand = brandService.getById(esModel.getBrandId());
+            esModel.setBrandImg(brand.getLogo());
+            esModel.setBrandImg(brand.getName());
+
+            CategoryEntity category = categoryService.getById(esModel.getCatalogId());
+            esModel.setCatalogName(category.getName());
+
+            // TODO: check all the searchable attrs for sku
+            return esModel;
+        }).collect(Collectors.toList());
+
+        // TODO: send data to ES (search service)
+        
     }
 
 
