@@ -3,7 +3,9 @@ package com.zyx.mall.warehouse.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyx.common.utils.PageUtils;
 import com.zyx.mall.warehouse.entity.WareSkuEntity;
+import com.zyx.mall.warehouse.vo.SkuHasStockVO;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,5 +21,6 @@ public interface WareSkuService extends IService<WareSkuEntity> {
 
     void addStock(Long skuId, Long wareId, Integer skuNum);
 
+    List<SkuHasStockVO> getSkuHasStock(List<Long> skuIds);
 }
 

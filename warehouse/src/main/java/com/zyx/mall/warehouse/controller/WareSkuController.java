@@ -1,14 +1,12 @@
 package com.zyx.mall.warehouse.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.zyx.mall.warehouse.vo.SkuHasStockVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.zyx.mall.warehouse.entity.WareSkuEntity;
 import com.zyx.mall.warehouse.service.WareSkuService;
@@ -41,7 +39,14 @@ public class WareSkuController {
         return R.ok().put("page", page);
     }
 
-
+    // check whether out of stock or not
+    @PostMapping("/hasstock")
+    public R<List<SkuHasStockVO>> getSkuHasStock(@RequestBody List<Long> skuIds) {
+        List<SkuHasStockVO> stockVOS = wareSkuService.getSkuHasStock(skuIds);
+        R<List<SkuHasStockVO>> ok = R.ok();
+        ok.setData(stockVOS);
+        return ok;
+    }
     /**
      * 信息
      */
