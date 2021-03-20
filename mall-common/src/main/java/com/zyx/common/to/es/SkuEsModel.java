@@ -33,7 +33,7 @@ public class SkuEsModel {
 
     private String catalogName;
 
-    private List<Object> attrs;
+    private List<Attrs> attrs;
 
     @Data
     public static class Attrs {

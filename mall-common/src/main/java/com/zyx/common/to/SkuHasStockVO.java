@@ -1,4 +1,4 @@
-package com.zyx.mall.warehouse.vo;
+package com.zyx.common.to;
 
 import lombok.Data;
 

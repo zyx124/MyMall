@@ -4,7 +4,8 @@ import sun.awt.SunHints;
 
 public enum BizCode {
     UNKNOWN_EXCEPTION(10000, "Unknown Exception"),
-    VALID_EXCEPTION(10001, "Data type not valid");
+    VALID_EXCEPTION(10001, "Data type not valid"),
+    PRODUCT_UP_EXCEPTION(11000, "Launching product error.");
 
     private int code;
     private String msg;
