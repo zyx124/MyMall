@@ -40,7 +40,7 @@ spring:
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
 
-        - id: warehouse
+        - id: warehouse_route
           uri: lb://warehouse
           predicates:
             - Path=/api/warehouse/**

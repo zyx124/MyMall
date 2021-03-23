@@ -2,7 +2,7 @@ spring:
   datasource:
     username: admin
     password: password
-    url: jdbc:mysql://127.0.0.1:3306/mall_ums
+    url: jdbc:mysql://127.0.0.1:3306/mall_ums?serverTimezone=UTC
     driver-class-name: com.mysql.jdbc.Driver
   cloud:
     nacos:
