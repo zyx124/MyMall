@@ -28,6 +28,14 @@ public class R<T> extends HashMap<String, Object> {
 
 	private T data;
 
+	public T getData() {
+		return data;
+	}
+
+	public void setData(T data) {
+		this.data = data;
+	}
+
 	
 	public static R error() {
 		return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "未知异常，请联系管理员");
@@ -69,11 +77,5 @@ public class R<T> extends HashMap<String, Object> {
 		return Integer.parseInt(this.get("code").toString());
 	}
 
-	public T getData() {
-		return data;
-	}
 
-	public void setData(T data) {
-		this.data = data;
-	}
 }
