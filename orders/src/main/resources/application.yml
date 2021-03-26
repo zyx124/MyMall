@@ -2,7 +2,7 @@ spring:
   datasource:
     username: admin
     password: password
-    url: jdbc:mysql://127.0.0.1:3306/mall_oms
+    url: jdbc:mysql://127.0.0.1:3306/mall_oms?serverTimezone=UTC
     driver-class-name: com.mysql.jdbc.Driver
 mybatis-plus:
   mapper-locations: classpath*:classpath*:/mapper/**/*.xml
