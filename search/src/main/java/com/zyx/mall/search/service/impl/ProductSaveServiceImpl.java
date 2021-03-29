@@ -43,7 +43,7 @@ public class ProductSaveServiceImpl implements ProductSaveService {
         // TODO deal with batch errors
         boolean b = bulk.hasFailures();
         List<String> collect = Arrays.stream(bulk.getItems()).map(BulkItemResponse::getId).collect(Collectors.toList());
-        log.info("Launching product finished: {}", collect);
+        log.info("Launching product finished: {}, return values: {}", collect, bulk.toString());
 
         return b;
     }

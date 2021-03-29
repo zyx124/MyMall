@@ -29,11 +29,11 @@ public class ElasticSaveController {
         try {
             b = productSaveService.productStatusUp(skuEsModels);
         } catch (Exception e) {
-            log.error("ElasticSaveController product launching error: {}", e);
+            log.error("ElasticSaveController product launching error: {}", e.toString());
             return R.error(BizCode.PRODUCT_UP_EXCEPTION.getCode(), BizCode.PRODUCT_UP_EXCEPTION.getMsg());
         }
 
-        if (b) {
+        if (!b) {
             return R.ok();
         } else {
             return R.error(BizCode.PRODUCT_UP_EXCEPTION.getCode(), BizCode.PRODUCT_UP_EXCEPTION.getMsg());
