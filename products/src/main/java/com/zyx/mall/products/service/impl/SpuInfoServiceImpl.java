@@ -1,11 +1,16 @@
 package com.zyx.mall.products.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
+import com.zyx.common.constant.ProductConstant;
+import com.zyx.common.to.SkuHasStockVO;
 import com.zyx.common.to.SkuReductionTO;
 import com.zyx.common.to.SpuBoundTO;
 import com.zyx.common.to.es.SkuEsModel;
 import com.zyx.common.utils.R;
 import com.zyx.mall.products.entity.*;
 import com.zyx.mall.products.feign.CouponFeignService;
+import com.zyx.mall.products.feign.SearchFeignService;
+import com.zyx.mall.products.feign.WareFeignService;
 import com.zyx.mall.products.service.*;
 import com.zyx.mall.products.vo.*;
 import org.apache.commons.lang.StringUtils;
@@ -15,10 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -63,6 +65,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    WareFeignService wareFeignService;
+
+    @Autowired
+    SearchFeignService searchFeignService;
 
 
     @Override
@@ -234,36 +242,86 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Override
     public void up(Long spuId) {
-        List<SkuEsModel> uoProducts = new ArrayList<>();
-
+        // check all the info of the corresponding id
         List<SkuInfoEntity> skus = skuInfoService.getSkuListBySpuId(spuId);
-        skus.stream().map(sku -> {
+        List<SkuEsModel> uoProducts = new ArrayList<>();
+        List<Long> skuIdList = skus.stream().map(SkuInfoEntity::getSkuId).collect(Collectors.toList());
+
+        // TODO: 4. check all the searchable attrs for sku
+        List<ProductAttrValueEntity> baseAttrs = productAttrValueService.baseAttrListForSpu(spuId);
+        List<Long> attrIds = baseAttrs.stream().map(attr -> {
+            return attr.getAttrId();
+        }).collect(Collectors.toList());
+
+        List<Long> searchAttrIds = attrService.selectSearchAttrIds(attrIds);
+        Set<Long> idSet = new HashSet<>(searchAttrIds);
+
+        List<SkuEsModel.Attrs> attrsList = baseAttrs.stream().filter(item -> {
+            return idSet.contains(item.getAttrId());
+        }).map(item -> {
+            SkuEsModel.Attrs attrs1 = new SkuEsModel.Attrs();
+            BeanUtils.copyProperties(item, attrs1);
+            return attrs1;
+        }).collect(Collectors.toList());
+
+        // TODO: 1. send the remote request to the warehouse to check stock info
+        Map<Long, Boolean> stockMap = null;
+        try {
+            R skuHasStock = wareFeignService.getSkuHasStock(skuIdList);
+            TypeReference<List<SkuHasStockVO>> typeReference = new TypeReference<List<SkuHasStockVO>>() {
+            };
+            stockMap = skuHasStock.getData(typeReference).stream().collect(Collectors.toMap(SkuHasStockVO::getSkuId, SkuHasStockVO::getHasStock));
+
+        } catch (Exception e) {
+            log.error("Stock service exception: reason {}", e);
+        }
+
+        Map<Long, Boolean> finalStockMap = stockMap;
+        List<SkuEsModel> upProducts = skus.stream().map(sku -> {
             SkuEsModel esModel = new SkuEsModel();
             BeanUtils.copyProperties(sku, esModel);
 
-            // deal with the difference
+            // deal with the difference (skuPrice, skuImg)
             esModel.setSkuPrice(sku.getPrice());
             esModel.setSkuImg(sku.getSkuDefaultImg());
 
-            // TODO: send the remote request to the warehouse to check stock info
+            // hasStock hotScore
+            if (finalStockMap == null) {
+                esModel.setHasStock(true);
+            } else {
+                esModel.setHasStock(finalStockMap.get(sku.getSkuId()));
+            }
 
-            //TODO: hotScore setting
 
+            //TODO: 2. hotScore setting
+            esModel.setHotScore(0L);
 
-            // TODO: check brand and category name info
+            // TODO: 3. check brand and category name info
             BrandEntity brand = brandService.getById(esModel.getBrandId());
             esModel.setBrandImg(brand.getLogo());
             esModel.setBrandImg(brand.getName());
 
+
             CategoryEntity category = categoryService.getById(esModel.getCatalogId());
             esModel.setCatalogName(category.getName());
 
-            // TODO: check all the searchable attrs for sku
+            esModel.setAttrs(attrsList);
+
+
             return esModel;
         }).collect(Collectors.toList());
 
-        // TODO: send data to ES (search service)
-        
+        // TODO: 5. send data to ES (search service)
+        R r = searchFeignService.productStatusUp(upProducts);
+        if (r.getCode() == 0) {
+            // success
+            // TODO change spu status
+            baseMapper.updateSpuStatus(spuId, ProductConstant.StatusEnum.SPU_UP.getCode());
+        } else {
+            // failure
+            // TODO repetitive calls (Interface idempotence)
+
+        }
     }
 
 
