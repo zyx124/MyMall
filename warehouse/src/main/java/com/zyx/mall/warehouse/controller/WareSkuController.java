@@ -41,11 +41,10 @@ public class WareSkuController {
 
     // check whether out of stock or not
     @PostMapping("/hasstock")
-    public R<List<SkuHasStockVO>> getSkuHasStock(@RequestBody List<Long> skuIds) {
+    public R getSkuHasStock(@RequestBody List<Long> skuIds) {
         List<SkuHasStockVO> stockVOS = wareSkuService.getSkuHasStock(skuIds);
-        R<List<SkuHasStockVO>> ok = R.ok();
-        ok.setData(stockVOS);
-        return ok;
+
+        return R.ok().setData(stockVOS);
     }
     /**
      * 信息
