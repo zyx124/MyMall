@@ -1,7 +1,6 @@
-package com.zyx.mall.products.controller;
+package com.zyx.mall.products.app;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -9,7 +8,6 @@ import com.zyx.common.valid.AddGroup;
 import com.zyx.common.valid.UpdateGroup;
 import com.zyx.common.valid.UpdateStatusGroup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,8 +20,6 @@ import com.zyx.mall.products.entity.BrandEntity;
 import com.zyx.mall.products.service.BrandService;
 import com.zyx.common.utils.PageUtils;
 import com.zyx.common.utils.R;
-
-import javax.validation.Valid;
 
 
 /**

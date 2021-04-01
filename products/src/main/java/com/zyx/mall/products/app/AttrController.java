@@ -1,4 +1,4 @@
-package com.zyx.mall.products.controller;
+package com.zyx.mall.products.app;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,13 +6,11 @@ import java.util.Map;
 
 import com.zyx.mall.products.entity.ProductAttrValueEntity;
 import com.zyx.mall.products.service.ProductAttrValueService;
-import com.zyx.mall.products.vo.AttrGroupRelationVO;
 import com.zyx.mall.products.vo.AttrRespVO;
 import com.zyx.mall.products.vo.AttrVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.zyx.mall.products.entity.AttrEntity;
 import com.zyx.mall.products.service.AttrService;
 import com.zyx.common.utils.PageUtils;
 import com.zyx.common.utils.R;

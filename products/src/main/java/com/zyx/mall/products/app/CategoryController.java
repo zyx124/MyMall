@@ -1,19 +1,16 @@
-package com.zyx.mall.products.controller;
+package com.zyx.mall.products.app;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zyx.mall.products.entity.CategoryEntity;
 import com.zyx.mall.products.service.CategoryService;
-import com.zyx.common.utils.PageUtils;
 import com.zyx.common.utils.R;
 
 

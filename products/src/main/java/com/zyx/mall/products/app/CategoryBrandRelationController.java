@@ -1,6 +1,5 @@
-package com.zyx.mall.products.controller;
+package com.zyx.mall.products.app;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
