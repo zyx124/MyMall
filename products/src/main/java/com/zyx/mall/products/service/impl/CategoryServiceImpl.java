@@ -1,6 +1,7 @@
 package com.zyx.mall.products.service.impl;
 
 import com.zyx.mall.products.service.CategoryBrandRelationService;
+import com.zyx.mall.products.vo.Catalog2VO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,6 +80,42 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         this.updateById(category);
         categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
 
+    }
+
+    @Override
+    public List<CategoryEntity> getFirstLevelCategories() {
+        List<CategoryEntity> entities = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
+        return entities;
+    }
+
+    @Override
+    public Map<String, List<Catalog2VO>> getCatalogJson() {
+        // get first level category list
+        List<CategoryEntity> firstLevelCategories = getFirstLevelCategories();
+
+        Map<String, List<Catalog2VO>> parent_cid = firstLevelCategories.stream().collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
+            // get second category
+            List<CategoryEntity> entities = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", v.getCatId()));
+            List<Catalog2VO> catalog2VOS = null;
+            if (entities != null) {
+                catalog2VOS = entities.stream().map(l2 -> {
+                    Catalog2VO catalog2VO = new Catalog2VO(v.getCatId().toString(), null, l2.getCatId().toString(), l2.getName());
+                    // get third category
+                    List<CategoryEntity> level3Catalog = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", l2.getCatId()));
+                    if (level3Catalog != null) {
+                        List<Catalog2VO.Catalog3VO> collect = level3Catalog.stream().map(l3 -> {
+                            Catalog2VO.Catalog3VO catalog3VO = new Catalog2VO.Catalog3VO(l2.getCatId().toString(), l3.getCatId().toString(), l3.getName());
+                            return catalog3VO;
+                        }).collect(Collectors.toList());
+                        catalog2VO.setCatalog3List(collect);
+                    }
+                    return catalog2VO;
+                }).collect(Collectors.toList());
+            }
+            return catalog2VOS;
+        }));
+
+        return parent_cid;
     }
 
     private List<Long> findParentPath(Long catelogId, List<Long> path) {
